@@ -1,4 +1,6 @@
+
 from google.cloud import storage
+from config import root, bucketName, sourceBlobName, destinationFileName
 import colorsys
 import time
 import os
@@ -10,27 +12,17 @@ import csv
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/pi/temperatuur/apikey.json"
 
-#set variables
-
-bucket_name = "zwaanshals"
-source_blob_name = "latest.csv"
-destination_file_name = "/home/pi/temperatuur/latest.csv"
-
 #download latest temperature from Google storage
 
-def download_blob(bucket_name, source_blob_name, destination_file_name):
+def download_blob(bucketName, sourceBlobName, destinationFileName):
     """Downloads a blob from the bucket."""
     storage_client = storage.Client()
-    bucket = storage_client.get_bucket(bucket_name)
-    blob = bucket.blob(source_blob_name)
+    bucket = storage_client.get_bucket(bucketName)
+    blob = bucket.blob(sourceBlobName)
 
-    blob.download_to_filename(destination_file_name)
+    blob.download_to_filename(destinationFileName)
 
-    print('Blob {} downloaded to {}.'.format(
-        source_blob_name,
-        destination_file_name))
-    
-download_blob(bucket_name, source_blob_name, destination_file_name)
+download_blob(bucketName, sourceBlobName, destinationFileName)
 
 #convert csv values into variables
 
@@ -39,7 +31,6 @@ with open('/home/pi/temperatuur/latest.csv', mode='r') as latest:
   for row in csv_reader:
     temperature = int(round(float(row["temperature"])))
     humidity = int(round(float(row["humidity"])))
-    
 
 #   for row in csv_reader:
 #     print(row["temperature"])
